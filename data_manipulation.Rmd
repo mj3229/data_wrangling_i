@@ -5,8 +5,61 @@ output: github_document
 
 ```{r setup}
 library(tidyverse)
-
 ```
+
+## load the FAS Litters Data
+
+```{r}
+litters_df = read.csv("./data/FAS_litters.csv")
+litters_df = janitor::clean_names(litters_df)
+```
+
+## `select`
+
+Choose some columns and not others.
+
+```{r}
+select(litters_df, group, gd0_weight)
+```
+
+Selecting a range of variables
+```{r}
+select(litters_df, group, gd0_weight:gd_of_birth)
+```
+
+Getting rid of a variable
+```{r}
+select(litters_df, -litter_number)
+```
+
+Rename and select certain groups
+```{r}
+select(litters_df, Group = group, LITTer_NUmBer = litter_number)
+```
+
+Rename certain variables but display all
+```{r}
+rename(litters_df, Group = group, LITTer_NUmBer = litter_number)
+```
+
+Select helpers
+
+```{r}
+select(litters_df, starts_with("gd"))
+```
+
+Litter number as first variable and keep everything else
+```{r}
+select(litters_df, litter_number, everything())
+```
+
+Same thing
+```{r}
+relocate(litters_df, litter_number)
+```
+
+
+
 
 
 
