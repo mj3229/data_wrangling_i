@@ -114,3 +114,55 @@ lotr_tidy =
     values_to = "words"
   )
 ```
+
+\##Joining datasets merging litters and pups datasets (pups into
+litters)
+
+Import and clean the FAS datasets.
+
+``` r
+pups_df =
+  read_csv("./data/FAS_pups.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(x1_male_2_female = recode(x1_male_2_female, `1` = "male", `2` = "female")) %>% 
+  rename(sex = x1_male_2_female) %>% 
+  rename(litter_number = x1)
+```
+
+    ## New names:
+    ## Rows: 316 Columns: 6
+    ## ── Column specification
+    ## ──────────────────────────────────────────────────────── Delimiter: "," chr
+    ## (6): ...1, 1 = male, 2 = female, ...3, ...4, ...5, ...6
+    ## ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+    ## Specify the column types or set `show_col_types = FALSE` to quiet this message.
+    ## • `` -> `...1`
+    ## • `` -> `...3`
+    ## • `` -> `...4`
+    ## • `` -> `...5`
+    ## • `` -> `...6`
+
+``` r
+litters_df = read_csv("./data/FAS_litters.csv") %>%   
+  janitor::clean_names() %>% 
+  relocate(litter_number) %>%
+  separate(group, into = c("dose", "day_of_tx"), sep = 3)
+```
+
+    ## Rows: 49 Columns: 8
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (4): Group, Litter Number, GD0 weight, GD18 weight
+    ## dbl (4): GD of Birth, Pups born alive, Pups dead @ birth, Pups survive
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+Next up, time to join them!
+
+``` r
+fas_df =
+  left_join(pups_df, litters_df, by = "litter_number") %>% 
+  arrange(litter_number) %>% 
+  relocate(litter_number, dose, day_of_tx)
+```
