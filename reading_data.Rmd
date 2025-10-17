@@ -12,7 +12,7 @@ library(httr)
 
 ## Scrape a Table from a website 
 
-I want the first table from [this page] (https://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm)
+I want the first table from [this page](https://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm)
 
 ```{r}
 url = "https://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm"
@@ -33,7 +33,30 @@ tabl_marj =
 ```
 
 
+## Star Wars Movie info
+
+I want the data from [here](https://www.imdb.com/list/ls070150896/).
+
+```{r}
+url = "https://www.imdb.com/list/ls070150896/"
+
+swm_html = read_html(url)
+```
 
 
+Grab elements that we want
+
+```{r}
+titles_vec = 
+  swm_html %>% 
+  html_nodes(css = ".ipc-title__text--reduced") %>% 
+  html_text()
+
+run_time_vec =
+  swm_html %>% 
+  html_nodes(css = ".dli-title-metadata-item:nth-child(2)") %>% 
+  html_text()
+```
+ 
 
 
