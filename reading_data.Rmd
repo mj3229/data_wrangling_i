@@ -74,5 +74,20 @@ nyc_water =
   as_tibble()
 ```
 
+## Some data aren't so nice
+
+POKEMON
+
+```{r}
+poke = 
+  GET("http://pokeapi.co/api/v2/pokemon/1") |>
+  content()
+
+poke[["name"]]
+poke[["height"]]
+poke[["abilities"]]
+```
+
+
 
 
