@@ -199,3 +199,74 @@ data_marj |>
 ```
 
 ![](strings_factors_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+``` r
+data("rest_inspec")
+
+rest_inspec = 
+    rest_inspec |> 
+    rename(borough = boro)
+
+
+rest_inspec |> 
+  group_by(borough, grade) |> 
+  summarize(n = n()) |> 
+  pivot_wider(names_from = grade, values_from = n)
+```
+
+    ## `summarise()` has grouped output by 'borough'. You can override using the
+    ## `.groups` argument.
+
+    ## # A tibble: 6 × 9
+    ## # Groups:   borough [6]
+    ##   borough           A     B     C  `NA`     N     P     Z     G
+    ##   <chr>         <int> <int> <int> <int> <int> <int> <int> <int>
+    ## 1 0                33     9     6    67    NA    NA    NA    NA
+    ## 2 Bronx         14071  2611   976 17190   161   236   605    NA
+    ## 3 Brooklyn      38896  6423  2194 49825   345   782  1168     2
+    ## 4 Manhattan     61675  9107  3600 76581   591   924  1816     3
+    ## 5 Queens        36258  5526  1996 44136   350   604  1287    NA
+    ## 6 Staten Island  5410   855   248  6315    71    61   116    NA
+
+remove inspections ABC and also remove the restaurants with missing
+borough information
+
+``` r
+rest_inspec =
+  rest_inspec |>
+  filter(grade %in% c("A", "B", "C"), borough != "Missing") |> 
+  mutate(borough = str_to_title(borough))
+
+rest_inspec |> 
+  filter(str_detect(dba, "[Pp][Ii][Zz][Zz][Aa]")) |> 
+  group_by(borough, grade) |> 
+  summarize(n = n()) |> 
+  pivot_wider(names_from = grade, values_from = n)
+```
+
+    ## `summarise()` has grouped output by 'borough'. You can override using the
+    ## `.groups` argument.
+
+    ## # A tibble: 5 × 4
+    ## # Groups:   borough [5]
+    ##   borough           A     B     C
+    ##   <chr>         <int> <int> <int>
+    ## 1 Bronx          1201   261    98
+    ## 2 Brooklyn       1919   291    95
+    ## 3 Manhattan      2091   400    96
+    ## 4 Queens         1695   239    78
+    ## 5 Staten Island   328    60    15
+
+Visualizations
+
+``` r
+rest_inspec |> 
+  filter(str_detect(dba, regex("pizza", ignore_case = TRUE))) |>
+  mutate(
+    borough = fct_infreq(borough),
+    borough = fct_recode(borough, "The City" = "Manhattan")) |>
+  ggplot(aes(x = borough, fill = grade)) + 
+  geom_bar()
+```
+
+![](strings_factors_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->

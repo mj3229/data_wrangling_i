@@ -145,3 +145,43 @@ data_marj |>
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
+```{r}
+data("rest_inspec")
+
+rest_inspec = 
+    rest_inspec |> 
+    rename(borough = boro)
+
+
+rest_inspec |> 
+  group_by(borough, grade) |> 
+  summarize(n = n()) |> 
+  pivot_wider(names_from = grade, values_from = n)
+```
+
+remove inspections ABC and also remove the restaurants with missing borough information
+```{r}
+rest_inspec =
+  rest_inspec |>
+  filter(grade %in% c("A", "B", "C"), borough != "Missing") |> 
+  mutate(borough = str_to_title(borough))
+
+rest_inspec |> 
+  filter(str_detect(dba, "[Pp][Ii][Zz][Zz][Aa]")) |> 
+  group_by(borough, grade) |> 
+  summarize(n = n()) |> 
+  pivot_wider(names_from = grade, values_from = n)
+```
+
+
+Visualizations
+```{r}
+rest_inspec |> 
+  filter(str_detect(dba, regex("pizza", ignore_case = TRUE))) |>
+  mutate(
+    borough = fct_infreq(borough),
+    borough = fct_recode(borough, "The City" = "Manhattan")) |>
+  ggplot(aes(x = borough, fill = grade)) + 
+  geom_bar()
+```
+
