@@ -185,3 +185,33 @@ rest_inspec |>
   geom_bar()
 ```
 
+weather data
+```{r}
+library(p8105.datasets)
+data("weather_df")
+```
+
+```{r}
+weather_df |>
+  mutate(name = forcats::fct_relevel(name, c("Molokai_HI", "CentralPark_NY", "Waterhole_WA"))) |> 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), color = "blue", alpha = .5) + 
+  theme(legend.position = "bottom")
+
+
+weather_df |>
+  mutate(name = forcats::fct_reorder(name, tmax)) |> 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), color = "blue", alpha = .5) + 
+  theme(legend.position = "bottom")
+
+weather_df |>
+  lm(tmax ~ name, data = _)
+
+weather_df |>
+  mutate(name = forcats::fct_relevel(name, c("Molokai_HI", "CentralPark_NY", "Waterhole_WA"))) |> 
+  lm(tmax ~ name, data = _)
+```
+
+
+
